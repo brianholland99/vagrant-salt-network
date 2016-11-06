@@ -1,0 +1,25 @@
+bridge: eno2
+master_ip: 192.168.1.124
+minions:
+  - name: minion01
+    box: /m/boxes/vagrant-vb/min-centos7.2.box
+    ip: 172.16.1.2
+    private_net: true
+    minions:
+      - name: minion01-01
+        box: /m/boxes/vagrant-vb/min-centos7.2.box
+        ip: 172.16.1.4
+        private_net: true
+      - name: minion01-02
+        box: /m/boxes/vagrant-vb/min-centos7.2.box
+        ip: 172.16.1.6
+        private_net: true
+        minions:
+          - name: minion01-01-01
+            box: /m/boxes/vagrant-vb/min-centos7.2.box
+            ip: 172.16.1.5
+            private_net: true
+  - name: minion02
+    box: /m/boxes/vagrant-vb/min-centos7.2.box
+    ip: 172.16.1.3
+    private_net: true
