@@ -8,6 +8,10 @@ file can describe a multi-tiered Salt network using syndic nodes to relay
 commands. This was intended to be used to test out Salt configuration, to
 play with syndic, and to try and deal with OS variants in the Salt states.
 
+The goal was to be totally repeatable setting up initial systems to test out
+Salt states. Without resetting the systems back to initial state, remnants
+can build up for various reasons and may not show deficiencies in the states.
+
 ## Configuration File Format
 
 The "saltnetcfg.yaml" file describes the network layout. The root level
