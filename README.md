@@ -8,6 +8,10 @@ file can describe a multi-tiered Salt network using syndic nodes to relay
 commands. This was intended to be used to test out Salt configuration, to
 play with syndic, and to try and deal with OS variants in the Salt states.
 
+The goal was to be totally repeatable setting up initial systems to test out
+Salt states. Without resetting the systems back to initial state, remnants
+can build up for various reasons and may not show deficiencies in the states.
+
 ## Configuration File Format
 
 The "saltnetcfg.yaml" file describes the network layout. The root level
@@ -15,7 +19,7 @@ has the following attributes:
 
 * bridge - Set to network device if bridged network is used (public_network).
 * master_ip - Set to the address of the existing master for this set of nodes.
-* minions - A hierarchical listing of minions.
+* minions - A nested array of minions to this minion.
 
 Each minion has the following attributes:
 
@@ -26,7 +30,7 @@ Each minion has the following attributes:
   and as the master address for each direct minion.
 * private_net: A boolean indicated whether the IP is to be treated
   as private (not bridged).
-* minions - (Optional) A nest array of minions to this minion.
+* minions - (Optional) A nested array of minions to this minion.
 
 The minions can be nested multiple levels deep.
 
