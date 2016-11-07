@@ -28,13 +28,15 @@ def handle_host(config, host, master_ip, bridge)
       node.vm.network "public_network", bridge: bridge, ip: host["ip"]
     end
     node.vm.provision :salt do |salt|
-      # The Salt minion_id config is currently ignored and Salt uses hostname,
-      # so make sure hostname above is set to the desired minion_id.
-      # This was noticed when setting hostname to the FQDN and setting
-      # minion_id to just the short name. 
+      # The Salt minion_id config is currently ignored and Salt bootstrap
+      # uses one of the hostnames that it finds. This is not necessarily
+      # the hostnam set here. It worked on the test box that was used
+      # originally that did not have a hostname previously set.  But,
+      # failed on public boxes that already had set a separate hostname.
+      # For now, set it in bootstrap_options.
       #salt.minion_id = "testminionname"
       salt.install_type = "stable"
-      salt.bootstrap_options = "-A #{master_ip}"
+      salt.bootstrap_options = "-A #{master_ip} -i #{host["name"]}"
       salt.minion_key = File.join(KEY_DIR, host["name"]) + ".pem"
       salt.minion_pub = File.join(KEY_DIR, host["name"]) + ".pub"
       if host["minions"]

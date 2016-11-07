@@ -20,6 +20,6 @@ minions:
             ip: 172.16.1.5
             private_net: true
   - name: minion02
-    box: /m/boxes/vagrant-vb/min-centos7.2.box
+    box: ubuntu/xenial64
     ip: 172.16.1.3
     private_net: true
