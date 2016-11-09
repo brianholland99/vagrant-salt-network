@@ -91,6 +91,9 @@ Altering the configuration file by adding nodes or changing hierarchy can cause
 issues if parts are left up and the new nodes are brought up. Destroying the
 complete set of nodes and bringing them up again should fix things.
 
+Note: If using a second tier, then remember to add "order_masters: True" to the
+overall master's configuration file as stated in the syndic documentation.
+
 ### Steps
 
 1. This assumes that a Salt master has been set up at the address indicated
