@@ -1,6 +1,6 @@
 require "yaml"
-require "fileutils"
 require "etc"
+require "json"
 
 TMP_DIR = "tmp-masterconfigs"
 KEY_DIR = "/m/salt-keys"
@@ -36,9 +36,10 @@ def handle_host(config, host, master_ip, bridge)
       # For now, set it in bootstrap_options.
       #salt.minion_id = "testminionname"
       salt.install_type = "stable"
-      salt.bootstrap_options = "-A #{master_ip} -i #{host["name"]}"
+      bootstrap_options = "-D -A #{master_ip} -i #{host["name"]}"
       salt.minion_key = File.join(KEY_DIR, host["name"]) + ".pem"
       salt.minion_pub = File.join(KEY_DIR, host["name"]) + ".pub"
+      master_cfg = {}
       if host["minions"]
         # There are relative minions of this node, so set up salt-master and
         # salt-minion. Preseed this nodes master with keys for those minions.
@@ -47,18 +48,16 @@ def handle_host(config, host, master_ip, bridge)
           minion_name = minion["name"]
           minion_keys[minion_name] = File.join(KEY_DIR, "#{minion_name}.pub")
         end
-        # Make master config file to define "syndic_master" since neither
-        # Vagrant Salt provisioner nor bootstrap-salt handle it directly.
-        FileUtils.mkdir_p TMP_DIR
-        File.open(File.join(TMP_DIR, host["name"]), "w") do |f|
-          f.write("syndic_master: #{master_ip}\n")
-        end
-        #salt.master_config = "syndic_master/#{host['name']}"
-        salt.master_config = File.join(TMP_DIR, host['name'])
+        master_cfg["syndic_master"] = master_ip
         salt.seed_master = minion_keys
         salt.install_master = true
         salt.install_syndic = true
       end
+      if not master_cfg.empty?
+          syndic_cfg = JSON.generate(master_cfg)
+          bootstrap_options << " -J '" << syndic_cfg << "'"
+      end
+      salt.bootstrap_options = bootstrap_options
     end
   end
   if host["minions"]
@@ -68,9 +67,6 @@ def handle_host(config, host, master_ip, bridge)
     end
   end
 end
-
-# Clear out previous syndic_master configs.
-FileUtils.rm_rf TMP_DIR
 
 def ensure_key(name)
   user = Etc.getlogin
