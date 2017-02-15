@@ -2,7 +2,6 @@ require "yaml"
 require "etc"
 require "json"
 
-TMP_DIR = "tmp-masterconfigs"
 KEY_DIR = "/m/salt-keys"
 
 conf = YAML.load_file("./saltnetcfg.yaml")
